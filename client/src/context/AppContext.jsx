@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import humanizeDuration from "humanize-duration";
+import { dummyCourses } from "../assets/assets";
 
 export const AppContext = createContext()
 
@@ -17,15 +18,15 @@ export const AppContextProvider = (props) => {
     const { user } = useUser()
 
     const [showLogin, setShowLogin] = useState(false)
-    const [isEducator,setIsEducator] = useState(false)
-    const [allCourses, setAllCourses] = useState([])
+    const [isEducator,setIsEducator] = useState(true)
+    const [allCourses, setAllCourses] = useState([] )
     const [userData, setUserData] = useState(null)
     const [enrolledCourses, setEnrolledCourses] = useState([])
 
     // Fetch All Courses
     const fetchAllCourses = async () => {
 
-        try {
+       /* try {
 
             const { data } = await axios.get(backendUrl + '/api/course/all');
 
@@ -37,10 +38,14 @@ export const AppContextProvider = (props) => {
 
         } catch (error) {
             toast.error(error.message)
-        }
+        }*/
+       setAllCourses(dummyCourses)
 
     }
-
+    
+    useEffect(() => {
+        fetchAllCourses()
+    }, [])
     // Fetch UserData 
     const fetchUserData = async () => {
 
@@ -108,7 +113,8 @@ export const AppContextProvider = (props) => {
         return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] })
 
     }
-
+    
+    //Function to calculate average rating of course
     const calculateRating = (course) => {
 
         if (course.courseRatings.length === 0) {
@@ -133,9 +139,7 @@ export const AppContextProvider = (props) => {
     }
 
 
-    useEffect(() => {
-        fetchAllCourses()
-    }, [])
+    
 
     // Fetch User's Data if User is Logged In
     useEffect(() => {

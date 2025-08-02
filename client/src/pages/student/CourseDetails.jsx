@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Footer from '../../components/student/Footer';
 import { assets } from '../../assets/assets';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../../context/AppContext';
 import { toast } from 'react-toastify';
@@ -17,15 +17,39 @@ const CourseDetails = () => {
   const [courseData, setCourseData] = useState(null)
   const [playerData, setPlayerData] = useState(null)
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
-
+  const {allCourses}=useContext(AppContext);
   const { backendUrl, currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
   const { getToken } = useAuth()
-
-
-  const fetchCourseData = async () => {
-
+/*TEST CODE*/
+const fetchCourseData = async () => {
+    const findCourse=allCourses.find(course=>course._id===id)
+    setCourseData(findCourse)
+    }
+    useEffect(()=>{fetchCourseData},[])
+    
+    return  courseData? (
+      <>
+      <div className='flex md:flex-rowflex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
+      <div className='absolute top-0 left-0 w-full h-section-height -z-1
+      bg-gradient-to-b from-cyan-100/70'></div>
+        {/*left  Column*/}
+        <div>
+          <h1>{courseData.courseTitle}</h1>
+          <p>{courseData.courseDescription}</p>
+        </div>
+        {/*right Column*/}
+        <div></div>
+      </div>
+      </>
+    ):<Loading />
+    /*ACTUAL CODE*/
+/*  const fetchCourseData = async () => {
+    const findCourse=allCourses.find(course=>course._id===id)
+    setCourseData=useState(findCourse)
+    }
+    useEffect(()=>{fetchCourseData},[])
+       
     try {
-
       const { data } = await axios.get(backendUrl + '/api/course/' + id)
 
       if (data.success) {
@@ -41,7 +65,6 @@ const CourseDetails = () => {
     }
 
   }
-
   const [openSections, setOpenSections] = useState({});
 
   const toggleSection = (index) => {
@@ -168,9 +191,9 @@ const CourseDetails = () => {
         </div>
 
         <div className="max-w-course-card z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]">
-          {
-            playerData
-              ? <YouTube videoId={playerData.videoId} opts={{ playerVars: { autoplay: 1 } }} iframeClassName='w-full aspect-video' />
+          {}
+            playerData ?//this ? is below line like ?Youtube
+               <YouTube videoId={playerData.videoId} opts={{ playerVars: { autoplay: 1 } }} iframeClassName='w-full aspect-video' />
               : <img src={courseData.courseThumbnail} alt="" />
           }
           <div className="p-5">
@@ -219,7 +242,7 @@ const CourseDetails = () => {
       </div>
       <Footer />
     </>
-  ) : <Loading />
+  ) : <Loading />*/
 };
 
 export default CourseDetails;
