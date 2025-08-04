@@ -6,23 +6,24 @@ import Loading from '../../components/student/Loading';
 
 const MyCourses = () => {
 
-  const { backendUrl, isEducator, currency, getToken } = useContext(AppContext)
+  const { backendUrl, isEducator, currency, getToken,allCourses } = useContext(AppContext)
 
   const [courses, setCourses] = useState(null)
 
   const fetchEducatorCourses = async () => {
 
-    try {
+    setCourses(allCourses)
+    // try {
 
-      const token = await getToken()
+    //   const token = await getToken()
 
-      const { data } = await axios.get(backendUrl + '/api/educator/courses', { headers: { Authorization: `Bearer ${token}` } })
+    //   const { data } = await axios.get(backendUrl + '/api/educator/courses', { headers: { Authorization: `Bearer ${token}` } })
 
-      data.success && setCourses(data.courses)
+    //   data.success && setCourses(data.courses)
 
-    } catch (error) {
-      toast.error(error.message)
-    }
+    // } catch (error) {
+    //   toast.error(error.message)
+    // }
 
   }
 

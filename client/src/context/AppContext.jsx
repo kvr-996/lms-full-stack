@@ -71,7 +71,16 @@ export const AppContextProvider = (props) => {
         }
 
     }
-
+    const fetchUserEnrolledCourses=async ()=>
+    {
+        setEnrolledCourses(dummyCourses);
+    }
+    useEffect(()=>
+    {
+        fetchAllCourses()
+        fetchUserEnrolledCourses()
+    },[])
+/*//ACTUAL CODE...
     // Fetch User Enrolled Courses
     const fetchUserEnrolledCourses = async () => {
 
@@ -87,6 +96,14 @@ export const AppContextProvider = (props) => {
         )
 
     }
+
+    // Fetch User's Data if User is Logged In
+    useEffect(() => {
+        if (user) {
+            fetchUserData()
+            fetchUserEnrolledCourses()
+        }
+    }, [user])*/
 
     // Function to Calculate Course Chapter Time
     const calculateChapterTime = (chapter) => {
@@ -113,7 +130,7 @@ export const AppContextProvider = (props) => {
         return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] })
 
     }
-    
+
     //Function to calculate average rating of course
     const calculateRating = (course) => {
 
@@ -128,6 +145,7 @@ export const AppContextProvider = (props) => {
         return Math.floor(totalRating / course.courseRatings.length)
     }
 
+    //Function to calculate the number of lectures in the course
     const calculateNoOfLectures = (course) => {
         let totalLectures = 0;
         course.courseContent.forEach(chapter => {
@@ -138,16 +156,6 @@ export const AppContextProvider = (props) => {
         return totalLectures;
     }
 
-
-    
-
-    // Fetch User's Data if User is Logged In
-    useEffect(() => {
-        if (user) {
-            fetchUserData()
-            fetchUserEnrolledCourses()
-        }
-    }, [user])
 
     const value = {
         showLogin, setShowLogin,
