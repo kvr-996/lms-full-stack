@@ -13,6 +13,7 @@ export const clerkWebHooks = async (req, res) => {
       "svix-timestamp": req.headers["svix-timestamp"],
     });
     const { data, type } = req.body;
+    console.log(data, type);
     switch (type) {
       case "user.created": {
         const userData = {
