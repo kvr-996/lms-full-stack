@@ -56,6 +56,7 @@ export const educatorDashboardData = async (req, res) => {
       courseId: { $in: courseIds },
       status: "completed",
     });
+    console.log(purchases);
     const totalEarnings = purchases.reduce(
       (sum, purchase) => sum + purchase.amount,
       0
@@ -84,13 +85,14 @@ export const educatorDashboardData = async (req, res) => {
       },
     });
   } catch (error) {
-    res.json({ success: true, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
 export const getEnrolledStudentsData = async (req, res) => {
   try {
     const educator = req.auth.userId;
+    console.log(educator);
     const courses = await Course.find({ educator });
     const courseIds = courses.map((course) => course._id);
     const purchases = await Purchase.find({
