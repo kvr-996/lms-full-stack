@@ -37,14 +37,16 @@ export const purchaseCourse = async (req, res) => {
     const { origin } = req.headers;
     const userId = req.auth.userId;
     console.log(typeof userId);
-    const userData = await getUserByClerkId(clerkUserId);
+    const userData = await User.findOne({ userId });
     const courseData = await Course.findById(courseId);
+    console.log(userData);
+    console.log(courseData);
     if (!userData || !courseData) {
       return res.json({ success: false, message: "Data not found" });
     }
     const purchaseData = {
       courseId: courseData._id,
-      userId,
+      userId: userData._id,
       amount: (
         courseData.coursePrice -
         (courseData.discount * courseData.coursePrice) / 100
