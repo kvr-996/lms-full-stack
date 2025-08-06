@@ -31,51 +31,73 @@ export const userEnrolledCourses = async (req, res) => {
   }
 };
 
+
 export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
     const { origin } = req.headers;
     const userId = req.auth.userId;
-    console.log(typeof userId);
-    const userData = await User.findOne({ userId });
+
+    const userData = await User.findById(userId);
     const courseData = await Course.findById(courseId);
-    console.log(userData);
-    console.log(courseData);
+
     if (!userData || !courseData) {
-      return res.json({ success: false, message: "Data not found" });
+      return res.json({ success: false, message: "User or Course not found" });
     }
-    const purchaseData = {
-      courseId: courseData._id,
+
+    const alreadyPurchased = await Purchase.findOne({
       userId: userData._id,
-      amount: (
+      courseId: courseData._id,
+      status: "completed",
+    });
+
+    if (alreadyPurchased) {
+      return res.json({
+        success: false,
+        message: "You have already purchased this course.",
+      });
+    }
+
+    const discountedAmount = parseFloat(
+      (
         courseData.coursePrice -
         (courseData.discount * courseData.coursePrice) / 100
-      ).toFixed(2),
-    };
-    const newPurchase = await Purchase.create(purchaseData);
+      ).toFixed(2)
+    );
+
+    const newPurchase = await Purchase.create({
+      courseId: courseData._id,
+      userId: userData._id,
+      amount: discountedAmount,
+      status: "pending",
+    });
+
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
-    const currency = process.env.CURRENCY.toLowerCase();
-    const line_items = [
-      {
-        price_data: {
-          currency,
-          product_data: {
-            name: courseData.courseTitle,
-          },
-          unit_amount: Math.floor(newPurchase.amount) * 100,
-        },
-        quantity: 1,
-      },
-    ];
+    const currency = process.env.CURRENCY?.toLowerCase() || "usd";
+
     const session = await stripeInstance.checkout.sessions.create({
       success_url: `${origin}/loading/my-enrollments`,
       cancel_url: `${origin}/`,
-      line_items: line_items,
       mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency,
+            product_data: {
+              name: courseData.courseTitle,
+            },
+            unit_amount: Math.round(discountedAmount * 100),
+          },
+          quantity: 1,
+        },
+      ],
       metadata: {
         purchaseId: newPurchase._id.toString(),
+        userId: userData._id.toString(),
+        courseId: courseData._id.toString(),
       },
     });
+
     res.json({ success: true, session_url: session.url });
   } catch (error) {
     res.json({ success: false, message: error.message });
