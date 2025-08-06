@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
+
 const PurchaseSchema = new mongoose.Schema(
   {
     courseId: {
@@ -7,7 +8,7 @@ const PurchaseSchema = new mongoose.Schema(
       required: true,
     },
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String, 
       ref: "User",
       required: true,
     },
@@ -21,5 +22,5 @@ const PurchaseSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Purchase = mongoose.model("Purchase", PurchaseSchema);
-export default Purchase;
+const Purchase = new mongoose.model('Purchase', PurchaseSchema)
+export default Purchase
