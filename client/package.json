@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.17.1",
-    "axios": "^1.7.8",
+    "axios": "^1.11.0",
     "humanize-duration": "^3.32.1",
     "package.json": "^2.0.1",
     "quill": "^2.0.3",
